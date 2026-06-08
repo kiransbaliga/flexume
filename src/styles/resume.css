@@ -1,0 +1,246 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   The rendered résumé document — "Classic single-column" template (v1).
+   All sizes are in pt so the on-screen A4 page maps 1:1 to the printed PDF.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.resume-page {
+  --accent: #1f2937;
+  --doc-font: Georgia, 'Times New Roman', serif;
+  --doc-scale: 1;
+  --doc-lh: 1.3;
+  --doc-mv: 16mm;
+  --doc-mh: 18mm;
+  --doc-section-gap: 13px;
+  --doc-entry-gap: 9px;
+
+  position: relative;
+  box-sizing: border-box;
+  width: 210mm;
+  min-height: 297mm;
+  padding: var(--doc-mv) var(--doc-mh);
+  background: #fff;
+  color: #1a1a1a;
+  font-family: var(--doc-font);
+  font-size: calc(10.5pt * var(--doc-scale));
+  line-height: var(--doc-lh);
+  -webkit-font-smoothing: antialiased;
+}
+
+.resume-page * {
+  box-sizing: border-box;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+.r-header {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.r-name {
+  margin: 0;
+  font-size: 2.15em;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.r-tagline {
+  margin-top: 3px;
+  font-size: 1.05em;
+  color: var(--accent);
+  letter-spacing: 0.3px;
+}
+
+.r-contacts {
+  margin-top: 6px;
+  font-size: 0.82em;
+  color: #404040;
+}
+
+.r-contacts .r-sep {
+  margin: 0 6px;
+  color: #9aa0a6;
+}
+
+.r-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+.r-link:hover {
+  text-decoration: underline;
+}
+
+/* Inline formatting marks (bold/italic/underline rendered by tags). */
+.resume-page mark {
+  background: #fde68a;
+  color: inherit;
+  padding: 0 1.5px;
+  border-radius: 2px;
+  /* Keep the highlight colour when printing / exporting to PDF. */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ── Sections ─────────────────────────────────────────────────────────────── */
+.r-section {
+  margin-top: var(--doc-section-gap);
+}
+
+.r-section-title {
+  margin: 0 0 6px;
+  font-size: 0.92em;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 1.2px solid var(--accent);
+  padding-bottom: 3px;
+}
+
+/* ── Standard entries (experience / education / projects) ─────────────────── */
+.r-entry {
+  margin-bottom: var(--doc-entry-gap);
+}
+.r-entry:last-child {
+  margin-bottom: 0;
+}
+
+/* Nested entry: a sub-item (e.g. a project under a company). */
+.r-entry.nested {
+  margin-left: 14px;
+  margin-top: calc(var(--doc-entry-gap) - 3px);
+}
+.r-entry.nested .r-entry-title {
+  font-size: 0.97em;
+}
+/* Tighten the gap between a parent entry and its first nested child. */
+.r-entry:has(+ .r-entry.nested) {
+  margin-bottom: 3px;
+}
+
+.r-entry-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.r-entry-title {
+  font-weight: 700;
+}
+
+.r-entry-meta {
+  font-size: 0.86em;
+  color: #555;
+  white-space: nowrap;
+}
+
+.r-entry-sub {
+  font-style: italic;
+  font-size: 0.96em;
+  color: #333;
+  margin-top: 1px;
+}
+
+.r-bullets {
+  margin: 3px 0 0;
+  padding-left: 17px;
+}
+
+.r-bullets li {
+  margin-bottom: 2.5px;
+  padding-left: 2px;
+}
+
+/* ── Summary ──────────────────────────────────────────────────────────────── */
+.r-summary {
+  margin: 0;
+  text-align: justify;
+}
+
+/* ── Skills ───────────────────────────────────────────────────────────────── */
+.r-skills {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.r-skill-cat {
+  font-weight: 700;
+}
+
+/* ── A4 page-break guides (screen only) ───────────────────────────────────── */
+.page-breaks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+.page-break-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1.5px dashed #94a3b8;
+}
+.page-break-label {
+  position: absolute;
+  right: 8px;
+  top: 0;
+  transform: translateY(-50%);
+  background: #475569;
+  color: #fff;
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 9pt;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* ── Print: isolate the page so preview === PDF ───────────────────────────── */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  /* Hide the whole app chrome, then reveal only the résumé page. */
+  body * {
+    visibility: hidden !important;
+  }
+  .resume-page,
+  .resume-page * {
+    visibility: visible !important;
+  }
+
+  /* Cancel any on-screen zoom transform so it prints at true size. */
+  .page-scaler {
+    transform: none !important;
+  }
+
+  /* On-screen-only page-break guides must never appear in the PDF. */
+  .page-breaks {
+    display: none !important;
+  }
+
+  .resume-page {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0 !important;
+    box-shadow: none !important;
+    width: 210mm;
+    min-height: 297mm;
+  }
+
+  .r-entry,
+  .r-section {
+    page-break-inside: avoid;
+  }
+}
