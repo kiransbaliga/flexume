@@ -5,7 +5,7 @@
 A two-pane résumé builder with a live, pixel-accurate A4 preview and local-AI
 text editing via Ollama. Built with React + Vite + TypeScript.
 
-**Live demo:** https://kiransbaliga.github.io/flexume/
+**Live demo:** https://baliga.dev/flexume/
 (The AI features need a local Ollama server, so they only work when running
 locally — the hosted demo gracefully shows "Ollama offline".)
 
