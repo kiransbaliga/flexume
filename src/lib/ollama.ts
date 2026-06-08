@@ -1,7 +1,40 @@
-// Thin client for the local Ollama server, reached through the Vite proxy
-// (see vite.config.ts). All requests hit /ollama/* which forwards to :11434.
+// Thin client for the local Ollama server.
+//
+// Endpoint resolution:
+//   1. a user override saved in localStorage (Settings → "Ollama endpoint"), else
+//   2. in dev: the Vite proxy at /ollama (same-origin, no CORS), else
+//   3. in prod (e.g. the hosted site): the local Ollama at http://localhost:11434.
+//
+// For the hosted site to reach a local Ollama, that Ollama must allow the site's
+// origin via OLLAMA_ORIGINS (and the browser may prompt for local-network access).
 
 export const OLLAMA_MODEL = 'gemma4:e4b'
+
+const ENDPOINT_KEY = 'ollama:endpoint'
+
+/** Default endpoint when the user hasn't overridden it. */
+export const defaultEndpoint = (): string => (import.meta.env.DEV ? '/ollama' : 'http://localhost:11434')
+
+/** The endpoint currently in use (override or default), trailing slash stripped. */
+export function getOllamaEndpoint(): string {
+  try {
+    const saved = localStorage.getItem(ENDPOINT_KEY)
+    if (saved && saved.trim()) return saved.trim().replace(/\/+$/, '')
+  } catch {
+    /* ignore */
+  }
+  return defaultEndpoint()
+}
+
+/** Persist an override; pass '' to clear and fall back to the default. */
+export function setOllamaEndpoint(url: string): void {
+  try {
+    if (url.trim()) localStorage.setItem(ENDPOINT_KEY, url.trim())
+    else localStorage.removeItem(ENDPOINT_KEY)
+  } catch {
+    /* ignore */
+  }
+}
 
 export interface AiPreset {
   id: string
@@ -56,7 +89,7 @@ interface GenerateResponse {
 
 /** Low-level call to /api/generate (non-streaming). */
 export async function generate(prompt: string, system?: string): Promise<string> {
-  const res = await fetch('/ollama/api/generate', {
+  const res = await fetch(`${getOllamaEndpoint()}/api/generate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -123,7 +156,7 @@ export interface OllamaStatus {
 /** Ping the server for the model list (used by the status indicator). */
 export async function checkOllama(): Promise<OllamaStatus> {
   try {
-    const res = await fetch('/ollama/api/tags')
+    const res = await fetch(`${getOllamaEndpoint()}/api/tags`)
     if (!res.ok) return { ok: false, models: [], hasModel: false, error: `HTTP ${res.status}` }
     const data = (await res.json()) as { models?: Array<{ name: string }> }
     const models = (data.models ?? []).map((m) => m.name)

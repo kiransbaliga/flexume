@@ -737,6 +737,33 @@ body.resizing * {
   width: 100%;
   accent-color: var(--black);
 }
+.set-divider {
+  border-top: 1px solid var(--border);
+  margin: 2px 0;
+}
+.set-hint {
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.set-hint code {
+  font-size: 11px;
+  background: var(--bg);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+.link-btn {
+  border: none;
+  background: none;
+  color: var(--ui-accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+.link-btn:hover {
+  text-decoration: underline;
+}
 
 /* ── AI menu ──────────────────────────────────────────────────────────────── */
 .ai-menu {

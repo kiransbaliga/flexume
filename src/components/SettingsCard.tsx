@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useResume } from '../store'
 import type { ResumeSettings } from '../types'
+import { defaultEndpoint, getOllamaEndpoint, setOllamaEndpoint } from '../lib/ollama'
 import { ExpandToggle } from './ui'
 
 function Slider({
@@ -44,6 +45,7 @@ export function SettingsCard() {
   const { resume, actions } = useResume()
   const s = resume.settings
   const [open, setOpen] = useState(false)
+  const [endpoint, setEndpoint] = useState(getOllamaEndpoint())
   const set = (patch: Partial<ResumeSettings>) => actions.updateSettings(patch)
 
   return (
@@ -128,6 +130,39 @@ export function SettingsCard() {
               onChange={(v) => set({ entryGap: v })}
             />
           </div>
+
+          <div className="set-divider" />
+          <label className="field">
+            <span className="field-label-row">
+              Ollama endpoint (AI)
+              <button
+                type="button"
+                className="link-btn"
+                onClick={() => {
+                  setOllamaEndpoint('')
+                  setEndpoint(defaultEndpoint())
+                }}
+              >
+                Use default
+              </button>
+            </span>
+            <input
+              type="text"
+              value={endpoint}
+              placeholder={defaultEndpoint()}
+              spellCheck={false}
+              autoCapitalize="off"
+              autoCorrect="off"
+              onChange={(e) => {
+                setEndpoint(e.target.value)
+                setOllamaEndpoint(e.target.value)
+              }}
+            />
+            <span className="set-hint">
+              Where AI requests go. On the hosted site, point this at your local Ollama
+              (<code>http://localhost:11434</code>) or an HTTPS tunnel URL.
+            </span>
+          </label>
         </div>
       )}
     </div>
